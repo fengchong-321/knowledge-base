@@ -16,7 +16,7 @@ knowledge-base/
 
 | 标题 | 分类 | 标签 | 更新时间 |
 |------|------|------|----------|
-| (暂无记录) | - | - | - |
+| [Claude Code 使用指南](tools/claude-code-usage.md) | tools | #cli #ai | 2026-02-23 |
 
 ---
 
