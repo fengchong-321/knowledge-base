@@ -19,6 +19,7 @@ knowledge-base/
 | [Claude Code 使用指南](tools/claude-code-usage.md) | tools | #cli #ai | 2026-02-23 |
 | [Skill vs MCP 选择指南](concepts/skill-vs-mcp.md) | concepts | #skill #mcp #架构 | 2026-02-23 |
 | [Add Knowledge Skill](tools/add-knowledge-skill.md) | tools | #skill #自动化 | 2026-02-23 |
+| [Docker 常用命令速查](tools/docker-commands.md) | tools | #docker #容器 | 2026-02-23 |
 
 ---
 
