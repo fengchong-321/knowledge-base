@@ -18,7 +18,8 @@ knowledge-base/
 |------|------|------|----------|
 | [Claude Code 使用指南](tools/claude-code-usage.md) | tools | #cli #ai | 2026-02-23 |
 | [Skill vs MCP 选择指南](concepts/skill-vs-mcp.md) | concepts | #skill #mcp #架构 | 2026-02-23 |
+| [Add Knowledge Skill](tools/add-knowledge-skill.md) | tools | #skill #自动化 | 2026-02-23 |
 
 ---
 
-> 使用方式: 告诉 Claude "记录这个知识点"，会自动搜索、总结并添加到本知识库
+> 使用方式: `/add-knowledge {主题}` 或告诉 Claude "记录这个知识点"
