@@ -17,6 +17,7 @@ knowledge-base/
 | 标题 | 分类 | 标签 | 更新时间 |
 |------|------|------|----------|
 | [Claude Code 使用指南](tools/claude-code-usage.md) | tools | #cli #ai | 2026-02-23 |
+| [Skill vs MCP 选择指南](concepts/skill-vs-mcp.md) | concepts | #skill #mcp #架构 | 2026-02-23 |
 
 ---
 
