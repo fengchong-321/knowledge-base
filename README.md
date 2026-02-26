@@ -21,6 +21,7 @@ knowledge-base/
 | [Add Knowledge Skill](tools/add-knowledge-skill.md) | tools | #skill #自动化 | 2026-02-23 |
 | [Docker 常用命令速查](tools/docker-commands.md) | tools | #docker #容器 | 2026-02-23 |
 | [Pytest 面试完全指南](programming/pytest-interview-guide.md) | programming | #pytest #python #testing #面试 | 2026-02-24 |
+| [Playwright 测试框架精通指南](programming/playwright-mastery.md) | programming | #playwright #automation #testing #e2e #面试 | 2026-02-26 |
 
 ---
 
