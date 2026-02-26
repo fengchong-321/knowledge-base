@@ -22,6 +22,11 @@ knowledge-base/
 | [Docker 常用命令速查](tools/docker-commands.md) | tools | #docker #容器 | 2026-02-23 |
 | [Pytest 面试完全指南](programming/pytest-interview-guide.md) | programming | #pytest #python #testing #面试 | 2026-02-24 |
 | [Playwright 测试框架精通指南](programming/playwright-mastery.md) | programming | #playwright #automation #testing #e2e #面试 | 2026-02-26 |
+| [Linux 命令测试工程师精通指南](tools/linux-commands-qa.md) | tools | #linux #shell #运维 #面试 | 2026-02-26 |
+| [SQL 命令测试工程师精通指南](programming/sql-qa-guide.md) | programming | #sql #database #testing #面试 | 2026-02-26 |
+| [Python Pandas 精通指南](programming/pandas-guide.md) | programming | #python #pandas #data-analysis #testing #面试 | 2026-02-26 |
+| [Python Requests 精通指南](programming/requests-guide.md) | programming | #python #requests #api-testing #http #面试 | 2026-02-26 |
+| [Airtest 框架测试工程师精通指南](programming/airtest-guide.md) | programming | #airtest #automation #mobile-testing #game-testing #面试 | 2026-02-26 |
 
 ---
 
