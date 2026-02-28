@@ -27,6 +27,7 @@ knowledge-base/
 | [Python Pandas 精通指南](programming/pandas-guide.md) | programming | #python #pandas #data-analysis #testing #面试 | 2026-02-26 |
 | [Python Requests 精通指南](programming/requests-guide.md) | programming | #python #requests #api-testing #http #面试 | 2026-02-26 |
 | [Airtest 框架测试工程师精通指南](programming/airtest-guide.md) | programming | #airtest #automation #mobile-testing #game-testing #面试 | 2026-02-26 |
+| [Claude Code 高级使用指南](tools/claude-code-advanced-guide.md) | tools | #claude-code #ai #productivity #高级技巧 | 2026-02-28 |
 
 ---
 
