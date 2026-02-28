@@ -1,12 +1,13 @@
-# Playwright 测试框架精通指南
+# Playwright Python 测试框架精通指南
 
-> 标签: #playwright #automation #testing #e2e #面试
+> 标签: #playwright #python #automation #testing #e2e #面试
 > 创建时间: 2026-02-26
-> 来源: [Playwright官方文档](https://playwright.dev/) | [GitHub](https://github.com/microsoft/playwright)
+> 更新时间: 2026-02-28
+> 来源: [Playwright Python官方文档](https://playwright.dev/python/) | [GitHub](https://github.com/microsoft/playwright-python)
 
 ## 概述
 
-Playwright 是微软开发的现代端到端测试框架，支持 Chromium、Firefox、WebKit 三大浏览器引擎，提供跨浏览器、跨语言的自动化测试能力。以其自动等待、并行执行、网络拦截等特性成为 2025 年最热门的测试框架之一。
+Playwright 是微软开发的现代端到端测试框架，支持 Chromium、Firefox、WebKit 三大浏览器引擎。Python 版本提供了与同步/异步 API，完美结合 Pytest 测试框架，是 2025 年 Python 自动化测试的首选方案。
 
 ---
 
@@ -33,174 +34,219 @@ Playwright 是微软开发的现代端到端测试框架，支持 Chromium、Fir
 |------|------------|----------|---------|
 | 浏览器支持 | Chromium, Firefox, WebKit (原生) | 所有主流浏览器 | 仅 Chromium 内核 |
 | 自动等待 | ✅ 内置 | ❌ 需手动 | ✅ 内置 |
-| 多语言支持 | JS/TS, Python, Java, .NET | Java, Python, C#, Ruby等 | 仅 JS/TS |
+| 多语言支持 | Python, JS/TS, Java, .NET | Java, Python, C#, Ruby等 | 仅 JS/TS |
 | 执行速度 | 快 | 较慢 | 快 |
 | 移动端模拟 | ✅ 内置 | ✅ 需 Appium | ❌ 有限 |
 | API 测试 | ✅ 内置 | ❌ 需额外工具 | ✅ 内置 |
 | Shadow DOM | ✅ 支持 | ❌ 困难 | ✅ 支持 |
 | 网络拦截 | ✅ 强大 | ❌ 有限 | ✅ 支持 |
+| Pytest 集成 | ✅ 原生支持 | ✅ 需配置 | ❌ 不支持 |
 
 **面试回答要点：**
-- 选择 Playwright 的原因：跨浏览器原生支持、自动等待机制、现代 Web 特性支持、微软维护
-- 相比 Cypress：支持 Safari、支持多语言、网络控制更强
-- 相比 Selenium：更快、更稳定、API 更现代
+- 选择 Playwright Python 的原因：自动等待、原生 Pytest 集成、跨浏览器、现代 API
+- 相比 Selenium：更快、更稳定、API 更现代、内置等待机制
+- 相比 Cypress：支持 Safari、支持 Python、网络控制更强
 
-#### 2. 定位器 (Locators)
+#### 2. 环境搭建
 
-```javascript
-// ============ 推荐的定位方式（按优先级）============
+```bash
+# 安装 Playwright
+pip install playwright
 
-// 1. Role 定位（最推荐，语义化）
-page.getByRole('button', { name: '提交' })
-page.getByRole('textbox', { name: '用户名' })
-page.getByRole('link', { name: '登录' })
+# 安装浏览器（必须）
+playwright install
 
-// 2. Test ID 定位（稳定，需开发配合）
-page.getByTestId('submit-button')
-page.getByTestId('login-form')
+# 安装特定浏览器
+playwright install chromium
+playwright install firefox
+playwright install webkit
 
-// 3. 文本定位
-page.getByText('欢迎登录')
-page.getByText(/欢迎\s*登录/)  // 正则
+# 安装 Pytest 插件（推荐）
+pip install pytest-playwright
 
-// 4. Label 定位（表单元素）
-page.getByLabel('密码')
+# 验证安装
+playwright --version
+```
 
-// 5. Placeholder 定位
-page.getByPlaceholder('请输入用户名')
+#### 3. 定位器 (Locators)
 
-// 6. CSS 选择器
-page.locator('#username')
-page.locator('.btn-primary')
-page.locator('form > button[type="submit"]')
+```python
+from playwright.sync_api import Page
 
-// 7. 组合定位
-page.locator('article').filter({ hasText: 'Playwright' })
-page.locator('.card').getByRole('button')
+# ============ 推荐的定位方式（按优先级）============
 
-// 8. XPath（不推荐，作为备选）
-page.locator('//button[@type="submit"]')
+# 1. Role 定位（最推荐，语义化）
+page.get_by_role("button", name="提交")
+page.get_by_role("textbox", name="用户名")
+page.get_by_role("link", name="登录")
+page.get_by_role("checkbox", name="记住我")
+
+# 2. Test ID 定位（稳定，需开发配合）
+page.get_by_test_id("submit-button")
+page.get_by_test_id("login-form")
+
+# 3. 文本定位
+page.get_by_text("欢迎登录")
+page.get_by_text("登录", exact=True)  # 精确匹配
+
+# 4. Label 定位（表单元素）
+page.get_by_label("密码")
+page.get_by_label("用户名")
+
+# 5. Placeholder 定位
+page.get_by_placeholder("请输入用户名")
+
+# 6. CSS 选择器
+page.locator("#username")
+page.locator(".btn-primary")
+page.locator("form > button[type='submit']")
+
+# 7. 组合定位
+page.locator("article").filter(has_text="Playwright")
+page.locator(".card").get_by_role("button")
+
+# 8. XPath（不推荐，作为备选）
+page.locator("//button[@type='submit']")
+
+# 9. 链式定位
+page.locator(".list").locator(".item").first
+page.locator(".list").locator(".item").nth(2)
 ```
 
 **面试考点：**
-- 为什么优先使用 `getByRole`？→ 语义化、可访问性、稳定性
+- 为什么优先使用 `get_by_role`？→ 语义化、可访问性、稳定性
 - 为什么避免 XPath？→ 脆弱、难维护、性能差
 - 如何定位 Shadow DOM 元素？→ Playwright 原生支持，直接定位
 
-#### 3. 断言 (Assertions)
+#### 4. 断言 (Assertions)
 
-```javascript
-import { test, expect } from '@playwright/test';
+```python
+import re
+from playwright.sync_api import Page, expect
 
-test('断言示例', async ({ page }) => {
-  // ----- 页面级断言 -----
-  await expect(page).toHaveURL(/dashboard/);
-  await expect(page).toHaveTitle(/Playwright/);
-  await expect(page).toHaveScreenshot('homepage.png');  // 视觉回归
+def test_assertions(page: Page):
+    page.goto("https://example.com")
 
-  // ----- 元素可见性断言 -----
-  await expect(locator).toBeVisible();
-  await expect(locator).toBeHidden();
-  await expect(locator).toBeEnabled();
-  await expect(locator).toBeDisabled();
-  await expect(locator).toBeEditable();
+    # ----- 页面级断言 -----
+    expect(page).to_have_url(re.compile(r".*dashboard.*"))
+    expect(page).to_have_title(re.compile(r".*Playwright.*"))
 
-  // ----- 文本内容断言 -----
-  await expect(locator).toHaveText('欢迎登录');
-  await expect(locator).toHaveText(/欢迎\s*登录/);  // 正则
-  await expect(locator).toContainText('登录');
+    # ----- 元素可见性断言 -----
+    locator = page.locator(".status")
+    expect(locator).to_be_visible()
+    expect(locator).to_be_hidden()
+    expect(locator).to_be_enabled()
+    expect(locator).to_be_disabled()
+    expect(locator).to_be_editable()
+    expect(locator).to_be_empty()
+    expect(locator).to_be_focused()
 
-  // ----- 属性断言 -----
-  await expect(locator).toHaveAttribute('href', '/docs');
-  await expect(locator).toHaveClass(/active/);
-  await expect(locator).toHaveCSS('color', 'rgb(255, 0, 0)');
-  await expect(locator).toHaveValue('input value');
+    # ----- 文本内容断言 -----
+    expect(locator).to_have_text("欢迎登录")
+    expect(locator).to_have_text(re.compile(r"欢迎\s*登录"))
+    expect(locator).to_contain_text("登录")
 
-  // ----- 数量断言 -----
-  await expect(locator).toHaveCount(5);
+    # ----- 属性断言 -----
+    expect(locator).to_have_attribute("href", "/docs")
+    expect(locator).to_have_class("active")
+    expect(locator).to_have_css("color", "rgb(255, 0, 0)")
+    expect(locator).to_have_value("input value")
 
-  // ----- 自定义超时 -----
-  await expect(locator).toBeVisible({ timeout: 10000 });
+    # ----- 数量断言 -----
+    expect(page.locator(".item")).to_have_count(5)
 
-  // ----- 否定断言 -----
-  await expect(locator).not.toBeVisible();
-});
+    # ----- 自定义超时 -----
+    expect(locator).to_be_visible(timeout=10000)
+
+    # ----- 否定断言 -----
+    expect(locator).not_to_be_visible()
+
+    # ----- 截图断言（视觉回归）-----
+    expect(page).to_have_screenshot("homepage.png")
 ```
 
 **面试考点：**
 - Playwright 断言是自动重试的吗？→ 是，默认 5 秒内重试
-- `toHaveText` vs `toContainText`？→ 完全匹配 vs 包含
-- 如何处理异步断言？→ 使用 `await`，Playwright 自动等待
+- `to_have_text` vs `to_contain_text`？→ 完全匹配 vs 包含
+- 如何处理异步断言？→ 使用 `expect`，Playwright 自动等待
 
-#### 4. 自动等待机制
+#### 5. 自动等待机制
 
-```javascript
-// Playwright 自动等待，无需显式 sleep
-test('自动等待示例', async ({ page }) => {
-  // 这些操作都会自动等待元素可操作
-  await page.click('button');          // 等待元素可见、可点击
-  await page.fill('#input', 'text');   // 等待元素可见、可编辑
-  await page.locator('.item').first().click();
+```python
+from playwright.sync_api import Page
 
-  // 显式等待特定条件
-  await page.waitForSelector('.loaded');
-  await page.waitForLoadState('networkidle');  // 等待网络空闲
-  await page.waitForURL(/dashboard/);
-  await page.waitForResponse(resp => resp.url().includes('/api/'));
+def test_auto_waiting(page: Page):
+    # Playwright 自动等待，无需显式 sleep
+    page.goto("https://example.com")
 
-  // 等待元素状态
-  await expect(page.locator('.loading')).toBeHidden();
-});
+    # 这些操作都会自动等待元素可操作
+    page.click("button")           # 等待元素可见、可点击
+    page.fill("#input", "text")    # 等待元素可见、可编辑
+    page.locator(".item").first.click()
+
+    # 显式等待特定条件
+    page.wait_for_selector(".loaded")
+    page.wait_for_load_state("networkidle")  # 等待网络空闲
+    page.wait_for_url("**/dashboard**")
+
+    # 等待请求完成
+    with page.expect_response("**/api/data**") as response:
+        page.click("button")
+    resp = response.value
+
+    # 等待元素状态
+    page.locator(".loading").wait_for(state="hidden")
 ```
 
 **面试考点：**
-- 为什么不需要 `sleep()`？→ Playwright 内置自动等待
+- 为什么不需要 `time.sleep()`？→ Playwright 内置自动等待
 - 什么时候需要显式等待？→ 复杂异步场景、网络请求、页面跳转
-- `waitForLoadState` 的三种状态？→ `domcontentloaded`、`load`、`networkidle`
+- `wait_for_load_state` 的三种状态？→ `domcontentloaded`、`load`、`networkidle`
 
-#### 5. Page Object Model (POM)
+#### 6. Page Object Model (POM)
 
-```javascript
-// ============ pages/LoginPage.ts ============
-import { Locator, Page } from '@playwright/test';
+```python
+# ============ pages/login_page.py ============
+from playwright.sync_api import Page, Locator
 
-export class LoginPage {
-  readonly page: Page;
-  readonly usernameInput: Locator;
-  readonly passwordInput: Locator;
-  readonly loginButton: Locator;
-  readonly errorMessage: Locator;
+class LoginPage:
+    def __init__(self, page: Page):
+        self.page = page
+        self.username_input: Locator = page.get_by_label("用户名")
+        self.password_input: Locator = page.get_by_label("密码")
+        self.login_button: Locator = page.get_by_role("button", name="登录")
+        self.error_message: Locator = page.locator(".error-message")
 
-  constructor(page: Page) {
-    this.page = page;
-    this.usernameInput = page.getByLabel('用户名');
-    this.passwordInput = page.getByLabel('密码');
-    this.loginButton = page.getByRole('button', { name: '登录' });
-    this.errorMessage = page.locator('.error-message');
-  }
+    def goto(self):
+        self.page.goto("/login")
 
-  async goto() {
-    await this.page.goto('/login');
-  }
+    def login(self, username: str, password: str):
+        self.username_input.fill(username)
+        self.password_input.fill(password)
+        self.login_button.click()
 
-  async login(username: string, password: string) {
-    await this.usernameInput.fill(username);
-    await this.passwordInput.fill(password);
-    await this.loginButton.click();
-  }
-}
+    def get_error(self) -> str:
+        return self.error_message.text_content()
 
-// ============ tests/login.spec.ts ============
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage';
 
-test('登录成功', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  await loginPage.goto();
-  await loginPage.login('testuser', 'password123');
+# ============ tests/test_login.py ============
+from playwright.sync_api import Page, expect
+from pages.login_page import LoginPage
 
-  await expect(page).toHaveURL(/dashboard/);
-});
+def test_login_success(page: Page):
+    login_page = LoginPage(page)
+    login_page.goto()
+    login_page.login("testuser", "password123")
+
+    expect(page).to_have_url(re.compile(r".*dashboard.*"))
+
+
+def test_login_failed(page: Page):
+    login_page = LoginPage(page)
+    login_page.goto()
+    login_page.login("wrong", "wrong")
+
+    expect(login_page.error_message).to_be_visible()
 ```
 
 **面试考点：**
@@ -212,377 +258,423 @@ test('登录成功', async ({ page }) => {
 
 ### 🟠 重要
 
-#### 6. 多窗口/多标签页处理
+#### 7. 多窗口/多标签页处理
 
-```javascript
-test('多窗口处理', async ({ page, context }) => {
-  // 方式一：监听新页面
-  const [newPage] = await Promise.all([
-    context.waitForEvent('page'),
-    page.click('a[target="_blank"]')
-  ]);
-  await newPage.waitForLoadState();
-  await expect(newPage).toHaveTitle(/新页面/);
-  await newPage.close();
+```python
+from playwright.sync_api import Page, BrowserContext
 
-  // 方式二：获取所有页面
-  const allPages = context.pages();
-  const popupPage = allPages.find(p => p.url().includes('popup'));
-});
+def test_multiple_pages(page: Page, context: BrowserContext):
+    # 方式一：监听新页面
+    with context.expect_page() as new_page_info:
+        page.click("a[target='_blank']")
+    new_page = new_page_info.value
+
+    new_page.wait_for_load_state()
+    expect(new_page).to_have_title(re.compile(r".*新页面.*"))
+    new_page.close()
+
+    # 方式二：获取所有页面
+    all_pages = context.pages
+    popup_page = next((p for p in all_pages if "popup" in p.url), None)
 ```
 
-#### 7. iframe 处理
+#### 8. iframe 处理
 
-```javascript
-test('iframe 处理', async ({ page }) => {
-  // 获取 frame
-  const frame = page.frameLocator('#myframe');
+```python
+from playwright.sync_api import Page
 
-  // 在 frame 中操作
-  await frame.getByRole('button', { name: '提交' }).click();
-  await frame.locator('#input').fill('text');
+def test_iframe(page: Page):
+    # 获取 frame
+    frame = page.frame_locator("#myframe")
 
-  // 嵌套 iframe
-  const nestedFrame = frame.frameLocator('.inner-frame');
-  await nestedFrame.getByText('内容').click();
-});
+    # 在 frame 中操作
+    frame.get_by_role("button", name="提交").click()
+    frame.locator("#input").fill("text")
+
+    # 嵌套 iframe
+    nested_frame = frame.frame_locator(".inner-frame")
+    nested_frame.get_by_text("内容").click()
 ```
 
-#### 8. 网络拦截与 Mock
+#### 9. 网络拦截与 Mock
 
-```javascript
-test('网络拦截', async ({ page }) => {
-  // 拦截并 Mock 响应
-  await page.route('**/api/user', async route => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ name: 'Mock User', id: 123 })
-    });
-  });
+```python
+from playwright.sync_api import Page, Route
 
-  // 拦截并修改请求
-  await page.route('**/api/login', async route => {
-    const request = route.request();
-    await route.continue({
-      headers: { ...request.headers(), 'Authorization': 'Bearer token' }
-    });
-  });
+def test_network_mock(page: Page):
+    # 拦截并 Mock 响应
+    def handle_route(route: Route):
+        route.fulfill(
+            status=200,
+            content_type="application/json",
+            body='{"name": "Mock User", "id": 123}'
+        )
 
-  // 拦截并 abort
-  await page.route('**/analytics/**', route => route.abort());
+    page.route("**/api/user", handle_route)
 
-  // 模拟离线
-  await context.setOffline(true);
+    # 拦截并修改请求
+    def modify_request(route: Route):
+        headers = route.request.headers
+        headers["Authorization"] = "Bearer token"
+        route.continue_(headers=headers)
 
-  await page.goto('/');
-});
+    page.route("**/api/login", modify_request)
+
+    # 拦截并 abort
+    page.route("**/analytics/**", lambda route: route.abort())
+
+    # 模拟离线
+    page.context.set_offline(True)
+
+    page.goto("/")
 ```
 
-#### 9. 文件上传与下载
+#### 10. 文件上传与下载
 
-```javascript
-test('文件操作', async ({ page }) => {
-  // ----- 文件上传 -----
-  // 单文件
-  await page.setInputFiles('input[type="file"]', 'tests/fixtures/test.pdf');
+```python
+from playwright.sync_api import Page
 
-  // 多文件
-  await page.setInputFiles('input[type="file"]', ['file1.pdf', 'file2.pdf']);
+def test_file_operations(page: Page):
+    # ----- 文件上传 -----
+    # 单文件
+    page.set_input_files("input[type='file']", "tests/fixtures/test.pdf")
 
-  // 清空文件
-  await page.setInputFiles('input[type="file"]', []);
+    # 多文件
+    page.set_input_files("input[type='file']", ["file1.pdf", "file2.pdf"])
 
-  // ----- 文件下载 -----
-  const [download] = await Promise.all([
-    page.waitForEvent('download'),
-    page.click('a[download]')
-  ]);
+    # 清空文件
+    page.set_input_files("input[type='file']", [])
 
-  const path = await download.path();
-  const fileName = download.suggestedFilename();
-  await download.saveAs('downloads/' + fileName);
-});
+    # ----- 文件下载 -----
+    with page.expect_download() as download_info:
+        page.click("a[download]")
+    download = download_info.value
+
+    path = download.path()
+    file_name = download.suggested_filename
+    download.save_as("downloads/" + file_name)
 ```
 
-#### 10. API 测试
+#### 11. API 测试
 
-```javascript
-import { test, expect } from '@playwright/test';
+```python
+from playwright.sync_api import APIRequestContext, expect
 
-test.describe('API 测试', () => {
-  test('GET 请求', async ({ request }) => {
-    const response = await request.get('/api/users');
-    expect(response.ok()).toBeTruthy();
+def test_api_get(api_request_context: APIRequestContext):
+    response = api_request_context.get("/api/users")
+    assert response.ok
 
-    const data = await response.json();
-    expect(data.length).toBeGreaterThan(0);
-  });
+    data = response.json()
+    assert len(data) > 0
 
-  test('POST 请求', async ({ request }) => {
-    const response = await request.post('/api/login', {
-      data: {
-        username: 'test',
-        password: 'password123'
-      }
-    });
 
-    expect(response.status()).toBe(200);
-    const body = await response.json();
-    expect(body.token).toBeTruthy();
-  });
+def test_api_post(api_request_context: APIRequestContext):
+    response = api_request_context.post("/api/login", data={
+        "username": "test",
+        "password": "password123"
+    })
 
-  test('带认证的请求', async ({ request }) => {
-    const response = await request.get('/api/profile', {
-      headers: {
-        'Authorization': 'Bearer token123'
-      }
-    });
-  });
-});
+    assert response.status == 200
+    body = response.json()
+    assert "token" in body
+
+
+def test_api_with_auth(api_request_context: APIRequestContext):
+    response = api_request_context.get("/api/profile", headers={
+        "Authorization": "Bearer token123"
+    })
+    assert response.ok
 ```
 
-#### 11. 设备模拟与响应式测试
+#### 12. 设备模拟与响应式测试
 
-```javascript
-import { test, devices } from '@playwright/test';
+```python
+from playwright.sync_api import Page, BrowserContext
+from playwright.sync_api import devices
 
-test.use({ ...devices['iPhone 13 Pro'] });
+def test_mobile(page: Page, context: BrowserContext):
+    # 使用设备配置
+    iphone = devices["iPhone 13 Pro"]
+    # 在 conftest.py 中配置
 
-test('移动端测试', async ({ page }) => {
-  await page.goto('/');
+    page.goto("/")
 
-  // 模拟地理位置
-  await page.setGeolocation({ latitude: 39.9042, longitude: 116.4074 });
+    # 模拟地理位置
+    page.set_geolocation({"latitude": 39.9042, "longitude": 116.4074})
 
-  // 模拟语言
-  await page.context().setLocale('zh-CN');
+    # 模拟语言
+    context.set_locale("zh-CN")
 
-  // 模拟深色模式
-  await page.emulateMedia({ colorScheme: 'dark' });
+    # 模拟深色模式
+    page.emulate_media(color_scheme="dark")
 
-  // 自定义视口
-  await page.setViewportSize({ width: 375, height: 667 });
-});
+    # 自定义视口
+    page.set_viewport_size({"width": 375, "height": 667})
 ```
 
-#### 12. 测试注解与分组
+#### 13. 测试标记与分组
 
-```javascript
-import { test, expect } from '@playwright/test';
+```python
+import pytest
+from playwright.sync_api import Page
 
-test.describe('用户模块', () => {
-  test.describe('登录功能', () => {
-    test('登录成功', async ({ page }) => {});
+@pytest.mark.slow
+def test_slow_operation(page: Page):
+    """慢速测试"""
+    pass
 
-    test.skip('跳过此测试', async ({ page }) => {});
+@pytest.mark.skip(reason="功能待开发")
+def test_skip_example(page: Page):
+    pass
 
-    test.only('只运行此测试', async ({ page }) => {});
+@pytest.mark.only_browser("chromium")
+def test_chromium_only(page: Page):
+    """仅在 Chromium 运行"""
+    pass
 
-    test.fixme('待修复的测试', async ({ page }) => {});
+@pytest.mark.skip_browser("firefox")
+def test_skip_firefox(page: Page):
+    """跳过 Firefox"""
+    pass
 
-    test.fail('预期失败的测试', async ({ page }) => {});
-
-    test.slow('慢速测试，超时 3 倍', async ({ page }) => {});
-  });
-
-  // 条件跳过
-  test('仅 Chrome 运行', async ({ page, browserName }) => {
-    test.skip(browserName !== 'chromium', '仅 Chrome 支持');
-  });
-
-  // 标签分组
-  test('冒烟测试 @smoke', async ({ page }) => {});
-});
+# 运行方式：
+# pytest -m slow                    # 只运行 slow 标记
+# pytest -m "not slow"              # 跳过 slow 标记
+# pytest --browser=chromium         # 指定浏览器
 ```
 
 ---
 
 ### 🟡 常用
 
-#### 13. playwright.config.ts 配置详解
+#### 14. playwright.config.py 配置详解
 
-```typescript
-import { defineConfig, devices } from '@playwright/test';
+```python
+# playwright.config.py
+from playwright.sync_api import BrowserType
+from typing import List
 
-export default defineConfig({
-  // 测试目录
-  testDir: './tests',
+# 测试目录
+test_dir = "./tests"
 
-  // 完全并行
-  fullyParallel: true,
+# 并行执行
+fully_parallel = True
 
-  // CI 上失败时禁止 test.only
-  forbidOnly: !!process.env.CI,
+# CI 上禁止 only
+forbid_only = True if os.getenv("CI") else False
 
-  // CI 上重试
-  retries: process.env.CI ? 2 : 0,
+# 重试次数
+retries = 2 if os.getenv("CI") else 0
 
-  // CI 上减少并行
-  workers: process.env.CI ? 1 : undefined,
+# 并行数
+workers = 1 if os.getenv("CI") else 4
 
-  // Reporter 配置
-  reporter: [
-    ['html', { outputFolder: 'playwright-report' }],
-    ['junit', { outputFile: 'results.xml' }],
-    ['list']
-  ],
+# 超时设置
+timeout = 30000
 
-  // 全局设置
-  use: {
-    baseURL: 'http://localhost:3000',
-    trace: 'retain-on-failure',      // 失败时保留 trace
-    screenshot: 'only-on-failure',   // 失败时截图
-    video: 'retain-on-failure',      // 失败时录像
-    actionTimeout: 10000,            // 操作超时
-    navigationTimeout: 30000,        // 导航超时
-  },
+# Reporter
+reporter = [
+    ["html", {"outputFolder": "playwright-report"}],
+    ["list"]
+]
 
-  // 项目配置（多浏览器）
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
-    { name: 'Mobile Chrome', use: { ...devices['Pixel 5'] } },
-    { name: 'Mobile Safari', use: { ...devices['iPhone 12'] } },
-  ],
-
-  // 本地启动服务
-  webServer: {
-    command: 'npm run start',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-  },
-});
-```
-
-#### 14. 测试钩子 (Fixtures)
-
-```javascript
-import { test as base, expect } from '@playwright/test';
-
-// 自定义 fixture
-type MyFixtures = {
-  loginPage: LoginPage;
-  authenticatedPage: Page;
-};
-
-export const test = base.extend<MyFixtures>({
-  loginPage: async ({ page }, use) => {
-    const loginPage = new LoginPage(page);
-    await use(loginPage);
-  },
-
-  authenticatedPage: async ({ page }, use) => {
-    // Setup: 登录
-    await page.goto('/login');
-    await page.fill('#username', 'testuser');
-    await page.fill('#password', 'password');
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/dashboard/);
-
-    await use(page);
-
-    // Teardown: 登出
-    await page.click('#logout');
-  },
-});
-
-test('已登录状态测试', async ({ authenticatedPage }) => {
-  await authenticatedPage.click('.profile');
-});
-```
-
-#### 15. 参数化测试
-
-```javascript
-// 数据驱动测试
-const loginData = [
-  { username: 'user1', password: 'pass1', expected: 'success' },
-  { username: 'user2', password: 'wrong', expected: 'error' },
-  { username: '', password: 'pass1', expected: 'error' },
-];
-
-for (const data of loginData) {
-  test(`登录测试: ${data.username}`, async ({ page }) => {
-    await page.goto('/login');
-    await page.fill('#username', data.username);
-    await page.fill('#password', data.password);
-    await page.click('button[type="submit"]');
-
-    if (data.expected === 'success') {
-      await expect(page).toHaveURL(/dashboard/);
-    } else {
-      await expect(page.locator('.error')).toBeVisible();
-    }
-  });
+# 全局设置
+use = {
+    "base_url": "http://localhost:3000",
+    "trace": "retain-on-failure",
+    "screenshot": "only-on-failure",
+    "video": "retain-on-failure",
+    "action_timeout": 10000,
+    "navigation_timeout": 30000,
 }
+
+# 浏览器项目配置
+projects = [
+    {
+        "name": "chromium",
+        "use": {"browser_name": "chromium"}
+    },
+    {
+        "name": "firefox",
+        "use": {"browser_name": "firefox"}
+    },
+    {
+        "name": "webkit",
+        "use": {"browser_name": "webkit"}
+    },
+    {
+        "name": "Mobile Chrome",
+        "use": devices["Pixel 5"]
+    },
+]
 ```
 
-#### 16. Trace Viewer 与调试
+#### 15. Pytest Fixtures
+
+```python
+# conftest.py
+import pytest
+from playwright.sync_api import Browser, BrowserContext, Page
+
+@pytest.fixture
+def authenticated_page(page: Page):
+    """已登录的页面"""
+    page.goto("/login")
+    page.fill("#username", "testuser")
+    page.fill("#password", "password")
+    page.click("button[type='submit']")
+    page.wait_for_url("**/dashboard**")
+
+    yield page
+
+    # Teardown: 登出
+    page.click("#logout")
+
+
+@pytest.fixture
+def api_context(browser: Browser):
+    """API 请求上下文"""
+    context = browser.new_context()
+    request_context = context.request
+    yield request_context
+    context.close()
+
+
+# 使用
+def test_with_auth(authenticated_page: Page):
+    authenticated_page.click(".profile")
+```
+
+#### 16. 参数化测试
+
+```python
+import pytest
+from playwright.sync_api import Page, expect
+
+# 数据驱动测试
+login_data = [
+    {"username": "user1", "password": "pass1", "expected": "success"},
+    {"username": "user2", "password": "wrong", "expected": "error"},
+    {"username": "", "password": "pass1", "expected": "error"},
+]
+
+@pytest.mark.parametrize("data", login_data)
+def test_login(data, page: Page):
+    page.goto("/login")
+    page.fill("#username", data["username"])
+    page.fill("#password", data["password"])
+    page.click("button[type='submit']")
+
+    if data["expected"] == "success":
+        expect(page).to_have_url(re.compile(r".*dashboard.*"))
+    else:
+        expect(page.locator(".error")).to_be_visible()
+```
+
+#### 17. Trace Viewer 与调试
 
 ```bash
 # 调试命令
-npx playwright test --ui              # UI 模式
-npx playwright test --debug           # 调试模式
-npx playwright test --trace on        # 开启 trace
-npx playwright show-trace trace.zip   # 查看 trace
+pytest --ui                          # UI 模式
+pytest --debug                       # 调试模式
+pytest --tracing on                  # 开启 trace
+playwright show-trace trace.zip      # 查看 trace
 
 # 代码生成
-npx playwright codegen https://example.com
+playwright codegen https://example.com
 
 # 查看报告
-npx playwright show-report
+playwright show-report
+
+# 指定浏览器
+pytest --browser=chromium
+pytest --browser=firefox --browser=webkit
+
+# 有头模式
+pytest --headed
+
+# 慢速执行
+pytest --slowmo=1000
 ```
 
 ---
 
 ### 🟢 了解
 
-#### 17. 高级特性
+#### 18. 高级特性
 
-```javascript
-// ----- Visual Regression Testing -----
-await expect(page).toHaveScreenshot('homepage.png', {
-  maxDiffPixels: 100,
-  animations: 'disabled'
-});
+```python
+from playwright.sync_api import Page, expect
 
-// ----- 组件测试 (React/Vue/Svelte) -----
-import { test, expect } from '@playwright/experimental-ct-react';
-import Button from './Button';
+def test_visual_regression(page: Page):
+    """视觉回归测试"""
+    page.goto("/")
+    expect(page).to_have_screenshot("homepage.png", max_diff_pixels=100)
 
-test('组件测试', async ({ mount }) => {
-  const component = await mount(<Button>Click me</Button>);
-  await expect(component).toContainText('Click me');
-});
 
-// ----- 电子邮件测试 -----
-test('邮件验证', async ({ page }) => {
-  // 使用 mailosaur 或类似服务
-});
+def test_performance(page: Page):
+    """性能测试"""
+    page.goto("/")
 
-// ----- 性能测试 -----
-test('性能指标', async ({ page }) => {
-  await page.goto('/');
-  const timing = await page.evaluate(() => {
-    const nav = performance.getEntriesByType('navigation')[0];
-    return {
-      domContentLoaded: nav.domContentLoadedEventEnd,
-      load: nav.loadEventEnd,
-    };
-  });
-  expect(timing.load).toBeLessThan(3000);
-});
+    # 获取性能指标
+    timing = page.evaluate("""() => {
+        const nav = performance.getEntriesByType('navigation')[0];
+        return {
+            domContentLoaded: nav.domContentLoadedEventEnd,
+            load: nav.loadEventEnd
+        }
+    }""")
+
+    assert timing["load"] < 3000
+
+
+def test_console_errors(page: Page):
+    """捕获控制台错误"""
+    errors = []
+
+    page.on("console", lambda msg: errors.append(msg) if msg.type == "error" else None)
+
+    page.goto("/")
+
+    assert len(errors) == 0, f"发现控制台错误: {errors}"
 ```
 
-#### 18. 测试分片 (Sharding)
+#### 19. 测试分片 (Sharding)
 
 ```bash
 # CI 中分片执行
-npx playwright test --shard=1/3  # 第一片
-npx playwright test --shard=2/3  # 第二片
-npx playwright test --shard=3/3  # 第三片
+pytest --shard=1/3  # 第一片
+pytest --shard=2/3  # 第二片
+pytest --shard=3/3  # 第三片
+```
+
+#### 20. 同步与异步 API
+
+```python
+# 同步 API（推荐入门）
+from playwright.sync_api import sync_playwright
+
+with sync_playwright() as p:
+    browser = p.chromium.launch()
+    page = browser.new_page()
+    page.goto("https://example.com")
+    print(page.title())
+    browser.close()
+
+
+# 异步 API（高性能场景）
+import asyncio
+from playwright.async_api import async_playwright
+
+async def main():
+    async with async_playwright() as p:
+        browser = await p.chromium.launch()
+        page = await browser.new_page()
+        await page.goto("https://example.com")
+        print(await page.title())
+        await browser.close()
+
+asyncio.run(main())
 ```
 
 ---
@@ -594,9 +686,10 @@ npx playwright test --shard=3/3  # 第三片
 | 问题 | 核心答案 |
 |------|----------|
 | 什么是 Playwright？ | 微软开发的现代 E2E 测试框架，支持跨浏览器、跨语言 |
-| 为什么选择 Playwright？ | 自动等待、跨浏览器原生支持、现代 Web 特性、微软维护 |
+| 为什么选择 Playwright Python？ | 自动等待、原生 Pytest 集成、跨浏览器、API 现代 |
 | Playwright 支持哪些浏览器？ | Chromium、Firefox、WebKit |
 | 什么是自动等待？ | 操作前自动等待元素可交互，无需显式 sleep |
+| 如何安装 Playwright？ | `pip install playwright` + `playwright install` |
 
 ### 进阶篇
 
@@ -604,7 +697,7 @@ npx playwright test --shard=3/3  # 第三片
 |------|----------|
 | 如何处理动态元素？ | 使用稳定的定位策略（role、testId），利用自动等待 |
 | POM 的核心原则？ | 分离页面逻辑与测试逻辑、单一职责、复用性 |
-| 如何处理 iframe？ | `page.frameLocator()` |
+| 如何处理 iframe？ | `page.frame_locator()` |
 | 如何模拟 API 响应？ | `page.route()` + `route.fulfill()` |
 | 如何优化测试速度？ | 并行执行、减少等待、复用 context、分片 |
 
@@ -613,9 +706,10 @@ npx playwright test --shard=3/3  # 第三片
 | 问题 | 核心答案 |
 |------|----------|
 | 如何集成 CI/CD？ | GitHub Actions、Jenkins、Docker 镜像 |
-| 如何处理认证状态？ | `storageState` 保存登录状态复用 |
+| 如何处理认证状态？ | `storage_state` 保存登录状态复用 |
 | Trace Viewer 是什么？ | 测试执行的完整记录，可回放调试 |
-| 如何做视觉回归测试？ | `expect(page).toHaveScreenshot()` |
+| 如何做视觉回归测试？ | `expect(page).to_have_screenshot()` |
+| 同步和异步 API 区别？ | sync_api 简单易用，async_api 性能更高 |
 
 ---
 
@@ -624,22 +718,24 @@ npx playwright test --shard=3/3  # 第三片
 ### 项目结构
 
 ```
-playwright-project/
+playwright-python-project/
 ├── tests/
-│   ├── e2e/                 # 端到端测试
-│   ├── api/                 # API 测试
-│   └── visual/              # 视觉回归测试
-├── pages/                   # Page Object
-├── fixtures/                # 自定义 fixtures
-├── test-data/               # 测试数据
-├── utils/                   # 工具函数
-├── playwright.config.ts     # 配置文件
-└── package.json
+│   ├── e2e/                     # 端到端测试
+│   ├── api/                     # API 测试
+│   └── visual/                  # 视觉回归测试
+├── pages/                       # Page Object
+├── fixtures/                    # Pytest fixtures
+├── test_data/                   # 测试数据
+├── utils/                       # 工具函数
+├── conftest.py                  # Pytest 配置
+├── playwright.config.py         # Playwright 配置
+├── pytest.ini                   # Pytest 配置
+└── requirements.txt
 ```
 
 ### 面试项目描述模板
 
-> "在我们的电商项目中，我使用 Playwright 搭建了完整的自动化测试框架：
+> "在我们的电商项目中，我使用 Playwright + Pytest 搭建了完整的自动化测试框架：
 >
 > 1. **框架设计**：采用 Page Object Model，分离业务逻辑和测试脚本
 > 2. **跨浏览器**：配置 Chrome、Firefox、Safari 三浏览器并行测试
@@ -651,10 +747,10 @@ playwright-project/
 
 | 场景 | 解决方案 |
 |------|----------|
-| 元素定位不稳定 | 使用 `getByRole`、`getByTestId`，避免 XPath |
+| 元素定位不稳定 | 使用 `get_by_role`、`get_by_test_id`，避免 XPath |
 | 测试偶发失败 | 检查自动等待、增加重试、分析 Trace |
 | 测试执行慢 | 并行执行、复用登录状态、优化选择器 |
-| 多环境测试 | 使用环境变量配置 `baseURL` |
+| 多环境测试 | 使用 `base_url` 配置 + 环境变量 |
 | 测试数据管理 | 使用 fixtures 或外部数据文件 |
 
 ---
@@ -672,12 +768,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-python@v5
         with:
-          node-version: 20
-      - run: npm ci
-      - run: npx playwright install --with-deps
-      - run: npx playwright test
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install --with-deps
+      - name: Run tests
+        run: pytest
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -693,17 +792,22 @@ pipeline {
   stages {
     stage('Install') {
       steps {
-        sh 'npm ci'
-        sh 'npx playwright install --with-deps'
+        sh 'pip install -r requirements.txt'
+        sh 'playwright install --with-deps'
       }
     }
     stage('Test') {
       steps {
-        sh 'npx playwright test'
+        sh 'pytest --html=report.html'
       }
       post {
         always {
           archiveArtifacts artifacts: 'playwright-report/**/*'
+          publishHTML target: [
+            reportDir: '.',
+            reportFiles: 'report.html',
+            reportName: 'Playwright Report'
+          ]
         }
       }
     }
@@ -714,12 +818,14 @@ pipeline {
 ### Docker 集成
 
 ```dockerfile
-FROM mcr.microsoft.com/playwright:v1.40.0-jammy
+FROM mcr.microsoft.com/playwright/python:v1.40.0-jammy
+
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 COPY . .
-CMD ["npx", "playwright", "test"]
+
+CMD ["pytest"]
 ```
 
 ---
@@ -728,45 +834,67 @@ CMD ["npx", "playwright", "test"]
 
 ```bash
 # 安装
-npm init playwright@latest
+pip install playwright pytest-playwright
+playwright install
 
 # 运行测试
-npx playwright test                    # 运行所有
-npx playwright test example.spec.ts    # 运行指定文件
-npx playwright test --project=chromium # 指定浏览器
-npx playwright test --headed           # 有头模式
-npx playwright test --ui               # UI 模式
-npx playwright test --debug            # 调试模式
+pytest                                # 运行所有
+pytest tests/test_login.py            # 运行指定文件
+pytest -k "login"                     # 按名称过滤
+pytest -m "smoke"                     # 按标记运行
+
+# 浏览器选项
+pytest --browser=chromium             # 指定浏览器
+pytest --browser=firefox --browser=webkit  # 多浏览器
+pytest --headed                       # 有头模式
+pytest --slowmo=1000                  # 慢速执行
+
+# 调试
+pytest --ui                           # UI 模式
+pytest --debug                        # 调试模式
+pytest --tracing on                   # 开启 trace
 
 # 代码生成
-npx playwright codegen https://example.com
+playwright codegen https://example.com
 
 # 报告
-npx playwright show-report
-
-# Trace
-npx playwright test --trace on
-npx playwright show-trace trace.zip
+pytest --html=report.html             # HTML 报告
+playwright show-report                # 查看报告
+playwright show-trace trace.zip       # 查看 trace
 
 # 安装浏览器
-npx playwright install
-npx playwright install chromium
+playwright install
+playwright install chromium
 ```
 
 ---
 
-## 七、学习路径建议
+## 七、Pytest + Playwright 常用 Fixtures
+
+| Fixture | 说明 |
+|---------|------|
+| `page` | Page 对象，每个测试独立 |
+| `context` | BrowserContext 对象 |
+| `browser` | Browser 对象 |
+| `browser_name` | 当前浏览器名称 |
+| `browser_type` | BrowserType 对象 |
+| `api_request_context` | API 请求上下文 |
+| `request` | Pytest request 对象 |
+
+---
+
+## 八、学习路径建议
 
 ```
 Week 1: 基础入门
-├── 环境搭建
-├── 定位器 (Locators)
-├── 断言 (Assertions)
-└── 基本操作 (click, fill, navigate)
+├── 环境搭建（pip install + playwright install）
+├── 定位器 (get_by_role, get_by_test_id)
+├── 断言 (expect)
+└── 基本操作 (click, fill, goto)
 
 Week 2: 进阶技能
 ├── Page Object Model
-├── 测试钩子 (beforeEach, fixtures)
+├── Pytest fixtures
 ├── 多窗口/iframe 处理
 └── 文件上传/下载
 
@@ -777,7 +905,7 @@ Week 3: 高级特性
 └── 设备模拟
 
 Week 4: 工程化
-├── playwright.config.ts 配置
+├── playwright.config.py 配置
 ├── CI/CD 集成
 ├── 测试报告
 └── 框架优化
@@ -789,13 +917,12 @@ Week 4: 工程化
 
 - [[Pytest 面试完全指南]]
 - [[Docker 常用命令速查]]
-- [[Claude Code 使用指南]]
+- [[Python Requests 精通指南]]
 
 ---
 *采集自 Claude Code 对话*
 
 **Sources:**
-- [Playwright 官方文档](https://playwright.dev/)
-- [Playwright GitHub](https://github.com/microsoft/playwright)
-- [Coursera Playwright Course](https://www.coursera.org/)
-- [BrowserStack Playwright Guide](https://www.browserstack.com/guide/playwright-with-javascript)
+- [Playwright Python 官方文档](https://playwright.dev/python/)
+- [Playwright Python GitHub](https://github.com/microsoft/playwright-python)
+- [Pytest-Playwright 插件](https://github.com/microsoft/playwright-pytest)
