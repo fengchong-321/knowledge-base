@@ -29,6 +29,7 @@ knowledge-base/
 | [Airtest 框架测试工程师精通指南](programming/airtest-guide.md) | programming | #airtest #automation #mobile-testing #game-testing #面试 | 2026-02-26 |
 | [Claude Code 高级使用指南](tools/claude-code-advanced-guide.md) | tools | #claude-code #ai #productivity #高级技巧 | 2026-02-28 |
 | [Claude Code 完整配置指南](tools/claude-code-setup-guide.md) | tools | #claude-code #ai #productivity #配置 #实战 | 2026-02-28 |
+| [Everything Claude Code 使用指南](tools/everything-claude-code-guide.md) | tools | #claude-code #agents #hooks #skills #commands #rules | 2026-02-28 |
 
 ---
 
